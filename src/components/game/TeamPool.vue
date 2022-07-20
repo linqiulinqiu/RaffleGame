@@ -46,7 +46,6 @@ export default {
       console.log("team pool", this.team_pool_list);
     },
     teamClaim: async function (addr) {
-      console.log("addr", addr);
       const res = await this.bsc.ctrs.holdgame.teamClaim(addr);
       console.log("team pool", res);
     },

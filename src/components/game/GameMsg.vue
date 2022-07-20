@@ -163,9 +163,7 @@ export default {
       } else {
         try {
           const obj = this;
-          const res = await ctr.claim(amount, {
-            gasLimit: 100 * 100000,
-          });
+          const res = await ctr.claim(amount);
           await game.waitEventDone(res, function (e) {
             obj.claim_loading = false;
             obj.claim_amount = "";
