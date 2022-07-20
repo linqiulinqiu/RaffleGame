@@ -14,7 +14,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.3",
     "node-polyfill-webpack-plugin": "^1.1.4",
-    "pbwallet": "github:tgarm/pbwallet#0.3.14",
+    "pbwallet": "github:tgarm/pbwallet#0.3.15",
     "vue": "^2.6.11",
     "vue-async-computed": "^3.9.0",
     "vue-clipboard2": "^0.3.3",

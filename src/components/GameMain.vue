@@ -46,12 +46,12 @@ export default {
       const ctr = this.bsc.ctrs.holdgame;
       this.countdown = ethers.utils.formatEther(await ctr.bonusPossible());
       const stateInfo = await ctr.bonusState();
-      console.log("load all data", this.countdown, stateInfo[3]);
+      console.log("load all data", stateInfo, stateInfo[3]);
       this.bonus_pool = await tokens.format(
         ethers.constants.AddressZero,
         stateInfo[2]
       );
-      this.mytikets = Number(stateInfo[3]);
+      this.mytickets = stateInfo[3].toNumber();
       console.log("this.My", this.mytickets);
       this.total_tickets = parseInt(stateInfo[1]);
     },

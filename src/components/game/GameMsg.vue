@@ -45,12 +45,25 @@
       >
         <p>
           奖金: <span class="left">{{ extract_amount }}</span> BNB
-          <el-button :loading="extract_loading" class="ext_btn">
+        </p>
+        <p>
+          <el-input
+            v-model="claim_amount"
+            placeholder="输入数字"
+            prefix-icon="el-icon-edit"
+            clearable
+            class="key-ipt"
+          >
+            <template slot="append">
+              <el-button class="left" @click="maxNum">Max</el-button>
+            </template>
+          </el-input>
+          <el-button :loading="claim_loading" class="ext_btn" @click="claim">
             提取
           </el-button>
         </p>
+
         <p>我的票证数 : {{ ticket_amount }}</p>
-        <p>票证号：</p>
       </el-col>
     </el-col>
   </el-col>
@@ -61,7 +74,7 @@ import game from "../../game";
 import tokens from "../../tokens";
 export default {
   name: "gameMsg",
-  props: ["bsc", "mytickets"],
+  props: ["bsc", "mytickets", "load_data"],
   computed: {
     keyPrice: function () {
       if (this.buyKey != "") {
@@ -76,8 +89,9 @@ export default {
     return {
       buyKey: "",
       buy_loading: false,
-      extract_amount: "null",
-      extract_loading: false,
+      extract_amount: "",
+      claim_amount: "",
+      claim_loading: false,
       ticket_amount: "null",
     };
   },
@@ -102,18 +116,16 @@ export default {
         });
         await game.waitEventDone(res, function (e) {
           obj.buy_loading = false;
+          obj.load_data();
         });
       } catch (e) {
         this.buy_loading = false;
         console.log("buy ticket", e);
       }
     },
-    //获取收益信息
     load_ext_amount: async function () {
-      console.log("bsc", this.bsc);
       const ctr = this.bsc.ctrs.holdgame;
       const amount = await ctr.claimable();
-      console.log("amount", amount);
       this.extract_amount = await tokens.format(
         ethers.constants.AddressZero,
         amount
@@ -125,6 +137,18 @@ export default {
         this.ticket_amount,
         this.mytickets
       );
+    },
+    maxNum: function () {
+      this.claim_amount = this.extract_amount;
+    },
+    claim: async function () {
+      const ctr = this.bsc.ctrs.holdgame;
+      const amount = await tokens.parse(
+        ethers.constants.AddressZero,
+        this.claim_amount
+      );
+      const res = await ctr.claim(amount);
+      console.log("res", res);
     },
   },
 };
