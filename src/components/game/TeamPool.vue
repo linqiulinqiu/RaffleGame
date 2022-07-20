@@ -33,12 +33,16 @@ export default {
     load_teamPool: async function () {
       const ctr = this.bsc.ctrs.holdgame;
       this.team_pool_list["BNB"].addr = this.addrZero;
-      this.team_pool_list["BNB"].amount = await ctr.teamClaimable(
-        this.addrZero
+      this.team_pool_list["BNB"].amount = await tokens.format(
+        this.addrZero,
+        await ctr.teamClaimable(this.addrZero)
       );
       const pbpaddr = this.bsc.ctrs.pbp.address;
       this.team_pool_list["PBP"].addr = pbpaddr;
-      this.team_pool_list["PBP"].amount = await ctr.teamClaimable(pbpaddr);
+      this.team_pool_list["PBP"].amount = await tokens.format(
+        pbpaddr,
+        await ctr.teamClaimable(pbpaddr)
+      );
       console.log("team pool", this.team_pool_list);
     },
     teamClaim: async function (addr) {
