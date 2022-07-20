@@ -2,23 +2,26 @@
   <el-col>
     <el-col id="gamemain">
       <el-col class="pool" :span="18" :offset="3">
-        <h2>
-          <span v-if="this.stateInfo[4]">游戏进行中</span>
-          <span v-else>游戏已结束，大奖已产生</span>
-        </h2>
-        <h5>谁能万里挑一？</h5>
-        <h1>
-          <span>奖池：</span>
-          <span class="font_color">{{ bonus_pool }}</span> BNB
-        </h1>
-        <p>
-          中奖概率: <span>{{ countdown * 100 }}%</span>
-        </p>
+        <el-col v-if="this.stateInfo[4]">
+          <h3>
+            游戏进行中 <span>第{{ times + 1 }}轮游戏</span>
+          </h3>
+          <h5>谁能万里挑一？</h5>
+          <h1>
+            <span>奖池：</span>
+            <span class="font_color">{{ bonus_pool }}</span> BNB
+          </h1>
+          <p>
+            中奖概率: <span>{{ countdown * 100 }}%</span>
+          </p>
+        </el-col>
+        <el-col v-else>
+          <h1>游戏已结束，大奖已产生</h1>
+        </el-col>
         <p>
           总票证数： <span>{{ parseInt(stateInfo[1]) }}</span>
         </p>
         <p>
-          第{{ times + 1 }}轮游戏
           <el-popover
             placement="right"
             title="Winner List"
@@ -38,7 +41,7 @@
     <el-col :span="18" :offset="3">
       <GameMsg
         :bsc="this.bsc"
-        :mytickets="this.stateInfo[3]"
+        :stateInfo="this.stateInfo"
         :load_data="load_data"
       />
     </el-col>
@@ -56,8 +59,8 @@ export default {
   props: ["bsc"],
   data() {
     return {
-      bonus_pool: "",
-      countdown: "",
+      bonus_pool: "0",
+      countdown: "null",
       times: "",
       stateInfo: "",
     };

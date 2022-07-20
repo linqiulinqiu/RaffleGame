@@ -55,11 +55,12 @@
             class="ext_btn"
             @click="claim"
             type="primary"
+            :disabled="buyDisable"
           >
             提取
           </el-button>
         </p>
-        <p>我的票证数 : {{ mytickets }}</p>
+        <p>我的票证数 : {{ stateInfo[3] }}</p>
       </el-col>
       <el-col class="gs gs2" :lg="{ span: 7 }" :span="18">
         <TeamPool :bsc="this.bsc" />
@@ -77,7 +78,7 @@ import tokens from "../../tokens";
 import TeamPool from "./TeamPool.vue";
 export default {
   name: "gameMsg",
-  props: ["bsc", "mytickets", "load_data"],
+  props: ["bsc", "stateInfo", "load_data"],
   components: {
     TeamPool,
   },
@@ -87,6 +88,12 @@ export default {
         return this.tPrice * this.buyKey;
       }
       return "";
+    },
+    buyDisable: function () {
+      if (this.stateInfo) {
+        return false;
+      }
+      return true;
     },
   },
   data() {
