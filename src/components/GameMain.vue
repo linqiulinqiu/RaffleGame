@@ -8,7 +8,7 @@
           <span class="font_color">{{ bonus_pool }}</span> BNB
         </h1>
         <p>
-          结束概率: <span>{{ countdown * 100 }}%</span>
+          中奖概率: <span>{{ countdown * 100 }}%</span>
         </p>
         <p>
           总票证数： <span>{{ total_tickets }}</span>
@@ -16,7 +16,11 @@
       </el-col>
     </el-col>
     <el-col>
-      <GameMsg :bsc="this.bsc" :mytickets="this.mytickets" />
+      <GameMsg
+        :bsc="this.bsc"
+        :mytickets="this.mytickets"
+        :load_data="load_data"
+      />
     </el-col>
   </el-col>
 </template>
@@ -40,6 +44,9 @@ export default {
   },
   mounted: function () {
     this.load_data();
+    setInterval(() => {
+      this.load_data();
+    }, 1000 * 60);
   },
   methods: {
     load_data: async function () {
@@ -52,7 +59,6 @@ export default {
         stateInfo[2]
       );
       this.mytickets = stateInfo[3].toNumber();
-      console.log("this.My", this.mytickets);
       this.total_tickets = parseInt(stateInfo[1]);
     },
   },

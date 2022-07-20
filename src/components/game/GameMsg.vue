@@ -63,7 +63,7 @@
           </el-button>
         </p>
 
-        <p>我的票证数 : {{ ticket_amount }}</p>
+        <p>我的票证数 : {{ mytickets }}</p>
       </el-col>
     </el-col>
   </el-col>
@@ -92,7 +92,6 @@ export default {
       extract_amount: "",
       claim_amount: "",
       claim_loading: false,
-      ticket_amount: "null",
     };
   },
   mounted: function () {
@@ -130,13 +129,7 @@ export default {
         ethers.constants.AddressZero,
         amount
       );
-      this.ticket_amount = this.mytickets;
-      console.log(
-        "load data",
-        this.extract_amount,
-        this.ticket_amount,
-        this.mytickets
-      );
+      console.log("load data", this.extract_amount, this.mytickets);
     },
     maxNum: function () {
       this.claim_amount = this.extract_amount;
