@@ -2,23 +2,43 @@
   <el-col>
     <el-col id="gamemain">
       <el-col class="pool" :span="18" :offset="3">
-        <h2>最终大奖</h2>
+        <h2>
+          <span v-if="this.stateInfo[4]">游戏进行中</span>
+          <span v-else>游戏已结束，大奖已产生</span>
+        </h2>
         <h5>谁能万里挑一？</h5>
         <h1>
+          <span>奖池：</span>
           <span class="font_color">{{ bonus_pool }}</span> BNB
         </h1>
         <p>
           中奖概率: <span>{{ countdown * 100 }}%</span>
         </p>
         <p>
-          总票证数： <span>{{ total_tickets }}</span>
+          总票证数： <span>{{ parseInt(stateInfo[1]) }}</span>
+        </p>
+        <p>
+          第{{ times + 1 }}轮游戏
+          <el-popover
+            placement="right"
+            title="Winner List"
+            width="400"
+            trigger="click"
+          >
+            <ul>
+              <li v-for="(item, index) in stateInfo[0]" :key="index">
+                {{ item }}
+              </li>
+            </ul>
+            <el-button slot="reference" size="mini">中奖者名单</el-button>
+          </el-popover>
         </p>
       </el-col>
     </el-col>
     <el-col>
       <GameMsg
         :bsc="this.bsc"
-        :mytickets="this.mytickets"
+        :mytickets="this.stateInfo[3]"
         :load_data="load_data"
       />
     </el-col>
@@ -36,10 +56,10 @@ export default {
   props: ["bsc"],
   data() {
     return {
-      bonus_pool: "未开始",
-      countdown: "未开始",
-      total_tickets: "未开始",
-      mytickets: "",
+      bonus_pool: "",
+      countdown: "",
+      times: "",
+      stateInfo: "",
     };
   },
   mounted: function () {
@@ -52,14 +72,13 @@ export default {
     load_data: async function () {
       const ctr = this.bsc.ctrs.holdgame;
       this.countdown = ethers.utils.formatEther(await ctr.bonusPossible());
-      const stateInfo = await ctr.bonusState();
-      console.log("load all data", stateInfo, stateInfo[3]);
+      this.stateInfo = await ctr.bonusState();
+      console.log("load all data", this.stateInfo);
       this.bonus_pool = await tokens.format(
         ethers.constants.AddressZero,
-        stateInfo[2]
+        this.stateInfo[2]
       );
-      this.mytickets = stateInfo[3].toNumber();
-      this.total_tickets = parseInt(stateInfo[1]);
+      this.times = this.stateInfo[0].length;
     },
   },
 };

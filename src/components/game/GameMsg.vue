@@ -58,14 +58,21 @@
               <el-button class="left" @click="maxNum">Max</el-button>
             </template>
           </el-input>
-          <el-button :loading="claim_loading" class="ext_btn" @click="claim">
+          <el-button
+            :loading="claim_loading"
+            class="ext_btn"
+            @click="claim"
+            type="primary"
+          >
             提取
           </el-button>
         </p>
-
         <p>我的票证数 : {{ mytickets }}</p>
       </el-col>
     </el-col>
+    <el-dialog :visible.sync="winTip" title="The Win Tip" width="400px">
+      <h1>中奖了！！！</h1>
+    </el-dialog>
   </el-col>
 </template>
 <script>
@@ -78,9 +85,7 @@ export default {
   computed: {
     keyPrice: function () {
       if (this.buyKey != "") {
-        const pn = 0.01;
-        const money = pn * this.buyKey;
-        return money;
+        return this.tPrice * this.buyKey;
       }
       return "";
     },
@@ -92,6 +97,10 @@ export default {
       extract_amount: "",
       claim_amount: "",
       claim_loading: false,
+      winTip: false,
+      cfg: [],
+      tPrice: "",
+      addrZero: ethers.constants.AddressZero,
     };
   },
   mounted: function () {
@@ -105,17 +114,19 @@ export default {
       this.buy_loading = true;
       const ctr = this.bsc.ctrs.holdgame;
       const big_num = ethers.BigNumber.from(this.buyKey);
-      const cfg = await ctr.configInfo();
-      const price = cfg[1];
-      console.log("config Info", cfg[0], ethers.utils.formatEther(cfg[1]));
       const obj = this;
+      const gas = ethers.BigNumber.from(80 * 10000).add(
+        big_num.mul(10 * 10000)
+      );
       try {
         const res = await ctr.buy(big_num, {
-          value: price.mul(big_num),
-          gasLimit: ethers.BigNumber.from(150 * 10000),
+          value: this.cfg[1].mul(big_num),
+          gasLimit: gas,
         });
         await game.waitEventDone(res, function (e) {
+          console.log("waitdown buy res", res, e);
           obj.buy_loading = false;
+          obj.buyKey = "";
           obj.load_data();
           obj.load_ext_amount();
         });
@@ -127,23 +138,32 @@ export default {
     load_ext_amount: async function () {
       const ctr = this.bsc.ctrs.holdgame;
       const amount = await ctr.claimable();
-      this.extract_amount = await tokens.format(
-        ethers.constants.AddressZero,
-        amount
-      );
-      console.log("load data", this.extract_amount, this.mytickets);
+      this.extract_amount = await tokens.format(this.addrZero, amount);
+      this.cfg = await ctr.configInfo();
+      this.tPrice = await tokens.format(this.addrZero, this.cfg[1]);
     },
     maxNum: function () {
       this.claim_amount = this.extract_amount;
     },
     claim: async function () {
+      this.claim_loading = true;
       const ctr = this.bsc.ctrs.holdgame;
-      const amount = await tokens.parse(
-        ethers.constants.AddressZero,
-        this.claim_amount
-      );
-      const res = await ctr.claim(amount);
-      console.log("res", res);
+      const amount = await tokens.parse(this.addrZero, this.claim_amount);
+      if (this.claim_amount > this.extract_amount) {
+        return this.$message("请输入正确的金额");
+      } else {
+        try {
+          const obj = this;
+          const res = await ctr.claim(amount);
+          await game.waitEventDone(res, function (e) {
+            obj.claim_loading = false;
+            obj.claim_amount = "";
+          });
+        } catch (e) {
+          console.log("claim err", e);
+          this.claim_loading = false;
+        }
+      }
     },
   },
 };
@@ -176,6 +196,9 @@ export default {
 } */
 .gs .ext_btn {
   margin-left: 10px;
+}
+.gs .ext_btn:hover {
+  color: #38f2af;
 }
 .buy-btn.el-button {
   width: 150px;
