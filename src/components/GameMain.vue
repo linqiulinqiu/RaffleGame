@@ -35,7 +35,7 @@
         </p>
       </el-col>
     </el-col>
-    <el-col>
+    <el-col :span="18" :offset="3">
       <GameMsg
         :bsc="this.bsc"
         :mytickets="this.stateInfo[3]"

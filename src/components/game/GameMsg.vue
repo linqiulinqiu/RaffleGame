@@ -1,13 +1,7 @@
 <template>
   <el-col>
     <el-col class="tab">
-      <el-col
-        class="gs"
-        :lg="{ span: 9, offset: 3 }"
-        :md="{ sapn: 18, offset: 3 }"
-        :sm="{ span: 18, offset: 3 }"
-        :xs="{ span: 18, offset: 3 }"
-      >
+      <el-col class="gs" :lg="{ span: 7, offset: 1 }" :span="18" :offset="1">
         <p>购买</p>
         <el-input
           type="text"
@@ -23,10 +17,14 @@
           </template>
         </el-input>
         <p class="plus-btn">
-          <el-button icon="el-icon-plus" @click="addKey(1)">1</el-button>
-          <el-button icon="el-icon-plus" @click="addKey(3)">3</el-button>
-          <el-button icon="el-icon-plus" @click="addKey(10)">10</el-button>
-          <el-button icon="el-icon-plus" @click="addKey(100)">100</el-button>
+          <el-button
+            icon="el-icon-plus"
+            v-for="item in tArr"
+            :key="item"
+            @click="addKey(item)"
+            size="mini"
+            >{{ item }}
+          </el-button>
         </p>
         <el-button
           :loading="buy_loading"
@@ -36,13 +34,7 @@
           >Buy</el-button
         >
       </el-col>
-      <el-col
-        class="gs gs2"
-        :lg="{ span: 9, offset: 0 }"
-        :md="{ sapn: 18, offset: 3 }"
-        :sm="{ span: 18, offset: 3 }"
-        :xs="{ span: 18, offset: 3 }"
-      >
+      <el-col class="gs gs2" :lg="{ span: 7 }" :span="18">
         <p>
           奖金: <span class="left">{{ extract_amount }}</span> BNB
         </p>
@@ -69,6 +61,9 @@
         </p>
         <p>我的票证数 : {{ mytickets }}</p>
       </el-col>
+      <el-col class="gs gs2" :lg="{ span: 7 }" :span="18">
+        <TeamPool :bsc="this.bsc" />
+      </el-col>
     </el-col>
     <el-dialog :visible.sync="winTip" title="The Win Tip" width="400px">
       <h1>中奖了！！！</h1>
@@ -79,9 +74,13 @@
 import { ethers } from "ethers";
 import game from "../../game";
 import tokens from "../../tokens";
+import TeamPool from "./TeamPool.vue";
 export default {
   name: "gameMsg",
   props: ["bsc", "mytickets", "load_data"],
+  components: {
+    TeamPool,
+  },
   computed: {
     keyPrice: function () {
       if (this.buyKey != "") {
@@ -93,6 +92,7 @@ export default {
   data() {
     return {
       buyKey: "",
+      tArr: [1, 3, 10, 100],
       buy_loading: false,
       extract_amount: "",
       claim_amount: "",
@@ -135,6 +135,7 @@ export default {
         console.log("buy ticket", e);
       }
     },
+
     load_ext_amount: async function () {
       const ctr = this.bsc.ctrs.holdgame;
       const amount = await ctr.claimable();
@@ -150,6 +151,7 @@ export default {
       const ctr = this.bsc.ctrs.holdgame;
       const amount = await tokens.parse(this.addrZero, this.claim_amount);
       if (this.claim_amount > this.extract_amount) {
+        this.claim_loading = false;
         return this.$message("请输入正确的金额");
       } else {
         try {
@@ -169,31 +171,27 @@ export default {
 };
 </script>
 <style>
+.tab {
+  background: rgba(55, 57, 67, 1);
+}
 .tab .gs > p {
   margin: 10px 0;
 }
 .gs {
-  /* border: 1px solid #fff; */
   padding: 40px;
   margin-top: 40px;
   border-radius: 20px;
-  background: rgba(55, 57, 67, 1);
-  margin-right: 20px;
+  background: rgb(6, 11, 34);
+  margin-right: 25px;
   min-height: 300px;
 }
 .left {
   margin-left: 10px;
 }
-.key-ipt.el-input {
-  width: 400px;
+.gs .key-ipt.el-input {
+  width: 60%;
+  min-width: 200px;
 }
-/* .plus-btn .el-button { 
-     margin-right: 5px;
-}*/
-
-/* .gs.gs2 {
-  margin-left: 2%;
-} */
 .gs .ext_btn {
   margin-left: 10px;
 }
