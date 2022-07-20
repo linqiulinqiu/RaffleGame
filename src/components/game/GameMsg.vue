@@ -5,7 +5,7 @@
         <p>购买</p>
         <el-input
           type="text"
-          v-model="buyKey"
+          v-model="Tickets_num"
           placeholder="输入数字"
           prefix-icon="el-icon-edit"
           clearable
@@ -31,6 +31,7 @@
           type="primary"
           class="buy-btn"
           @click="buyticket"
+          :disabled="this.buyDisable"
           >Buy</el-button
         >
       </el-col>
@@ -55,7 +56,6 @@
             class="ext_btn"
             @click="claim"
             type="primary"
-            :disabled="buyDisable"
           >
             提取
           </el-button>
@@ -84,13 +84,13 @@ export default {
   },
   computed: {
     keyPrice: function () {
-      if (this.buyKey != "") {
-        return this.tPrice * this.buyKey;
+      if (this.Tickets_num != "") {
+        return this.tPrice * this.Tickets_num;
       }
       return "";
     },
     buyDisable: function () {
-      if (this.stateInfo) {
+      if (this.stateInfo[4] || this.Tickets_num !== "") {
         return false;
       }
       return true;
@@ -98,7 +98,7 @@ export default {
   },
   data() {
     return {
-      buyKey: "",
+      Tickets_num: "",
       tArr: [1, 3, 10, 100],
       buy_loading: false,
       extract_amount: "",
@@ -112,15 +112,16 @@ export default {
   },
   mounted: function () {
     this.load_ext_amount();
+    console.log(this.buyDisable);
   },
   methods: {
     addKey: function (number) {
-      this.buyKey = number.toString();
+      this.Tickets_num = number.toString();
     },
     buyticket: async function () {
       this.buy_loading = true;
       const ctr = this.bsc.ctrs.holdgame;
-      const big_num = ethers.BigNumber.from(this.buyKey);
+      const big_num = ethers.BigNumber.from(this.Tickets_num);
       const obj = this;
       const gas = ethers.BigNumber.from(80 * 10000).add(
         big_num.mul(10 * 10000)
@@ -133,7 +134,7 @@ export default {
         await game.waitEventDone(res, function (e) {
           console.log("waitdown buy res", res, e);
           obj.buy_loading = false;
-          obj.buyKey = "";
+          obj.Tickets_num = "";
           obj.load_data();
           obj.load_ext_amount();
         });
@@ -142,7 +143,6 @@ export default {
         console.log("buy ticket", e);
       }
     },
-
     load_ext_amount: async function () {
       const ctr = this.bsc.ctrs.holdgame;
       const amount = await ctr.claimable();
@@ -163,7 +163,9 @@ export default {
       } else {
         try {
           const obj = this;
-          const res = await ctr.claim(amount);
+          const res = await ctr.claim(amount, {
+            gasLimit: 100 * 100000,
+          });
           await game.waitEventDone(res, function (e) {
             obj.claim_loading = false;
             obj.claim_amount = "";
