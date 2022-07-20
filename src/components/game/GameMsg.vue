@@ -112,10 +112,12 @@ export default {
       try {
         const res = await ctr.buy(big_num, {
           value: price.mul(big_num),
+          gasLimit: ethers.BigNumber.from(150 * 10000),
         });
         await game.waitEventDone(res, function (e) {
           obj.buy_loading = false;
           obj.load_data();
+          obj.load_ext_amount();
         });
       } catch (e) {
         this.buy_loading = false;
