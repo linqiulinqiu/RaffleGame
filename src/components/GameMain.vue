@@ -43,7 +43,6 @@
         :bsc="this.bsc"
         :stateInfo="this.stateInfo"
         :load_data="load_data"
-        :buyerList="this.buyerList"
       />
     </el-col>
     <el-col v-if="this.owner" :span="18" :offset="3" class="pool addrplay">
@@ -165,7 +164,7 @@ export default {
       }
       console.log("buyerList slice", this.buyerList);
 
-      this.$store.commit("setBuyerList", this.buyerList);
+      this.$store.commit("setBuyerList",this.buyerList);
     },
     getOwner: async function () {
       console.log("wait");

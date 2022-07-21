@@ -64,7 +64,7 @@
       </el-col>
       <el-col class="gs gs2" :lg="{ span: 7 }" :span="18">
         <h4>消息栏</h4>
-        <MsgCarousel :buyerList="this.buyerList" />
+        <MsgCarousel />
       </el-col>
     </el-col>
   </el-col>
@@ -76,7 +76,7 @@ import tokens from "../../tokens";
 import MsgCarousel from "./MsgCarousel.vue";
 export default {
   name: "gameMsg",
-  props: ["bsc", "stateInfo", "load_data", "buyerList"],
+  props: ["bsc", "stateInfo", "load_data"],
   components: {
     MsgCarousel,
   },
