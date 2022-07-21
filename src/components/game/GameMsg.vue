@@ -168,6 +168,7 @@ export default {
           await game.waitEventDone(res, function (e) {
             obj.claim_loading = false;
             obj.claim_amount = "";
+            obj.load_ext_amount()
           });
         } catch (e) {
           console.log("claim err", e);
