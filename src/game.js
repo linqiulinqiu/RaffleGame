@@ -7,7 +7,6 @@ import pbwallet from 'pbwallet'
 var bsc = {}
 const ptAddrs = {
     'BNB': ethers.constants.AddressZero,
-    // "USDT": bsc.ctrs.usdt.address
 }
 
 
@@ -29,6 +28,10 @@ async function waitEventDone(tx, done) {
     bsc.provider.once(tx.hash, function (evt) {
         done(tx, evt)
     })
+}
+
+async function listenEvents() {
+    
 }
 
 

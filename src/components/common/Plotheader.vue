@@ -4,7 +4,7 @@
       <el-col id="logo" :lg="3" :md="4" :sm="6" :xs="0">
         <img
           style="width: 160px"
-          src="../../public/image/logo_000.png"
+          src="../../../public/image/logo_000.png"
           alt="LOGO"
         />
       </el-col>
@@ -48,9 +48,9 @@
 </template>
 
 <script>
-import ConnectButton from "./lib/ConnectWalletButton.vue";
+import ConnectButton from "../lib/ConnectWalletButton.vue";
 import { mapState } from "vuex";
-import { i18n, setup } from "../locales";
+import { i18n, setup } from "../../locales";
 
 function versions() {
   const vs = {};

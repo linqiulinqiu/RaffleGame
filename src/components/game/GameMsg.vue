@@ -63,7 +63,8 @@
         <p>我的票证数 : {{ stateInfo[3] }}</p>
       </el-col>
       <el-col class="gs gs2" :lg="{ span: 7 }" :span="18">
-        <TeamPool :bsc="this.bsc" />
+        <h4>消息栏</h4>
+        <MsgCarousel :buyerList="this.buyerList" />
       </el-col>
     </el-col>
     <el-dialog :visible.sync="winTip" title="The Win Tip" width="400px">
@@ -75,12 +76,12 @@
 import { ethers } from "ethers";
 import game from "../../game";
 import tokens from "../../tokens";
-import TeamPool from "./TeamPool.vue";
+import MsgCarousel from "./MsgCarousel.vue";
 export default {
   name: "gameMsg",
-  props: ["bsc", "stateInfo", "load_data"],
+  props: ["bsc", "stateInfo", "load_data", "buyerList"],
   components: {
-    TeamPool,
+    MsgCarousel,
   },
   computed: {
     keyPrice: function () {
@@ -90,7 +91,7 @@ export default {
       return "";
     },
     buyDisable: function () {
-      if (this.stateInfo[4] || this.Tickets_num !== "") {
+      if (this.stateInfo[4] && this.Tickets_num !== "") {
         return false;
       }
       return true;
@@ -180,17 +181,19 @@ export default {
 <style>
 .tab {
   background: rgba(55, 57, 67, 1);
+  margin-top: 20px;
+  padding: 30px;
+  border-radius: 20px;
 }
 .tab .gs > p {
   margin: 10px 0;
 }
 .gs {
-  padding: 40px;
-  margin-top: 40px;
+  padding: 25px;
   border-radius: 20px;
   background: rgb(6, 11, 34);
   margin-right: 25px;
-  min-height: 300px;
+  min-height: 250px;
 }
 .left {
   margin-left: 10px;

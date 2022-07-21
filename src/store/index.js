@@ -7,7 +7,7 @@ export default new Vuex.Store({
     state: {
         bsc: {},
         baddr: false,
-        WBalance: 0,
+        buyerList:{}
         
     },
     mutations: {
@@ -18,8 +18,8 @@ export default new Vuex.Store({
         setBaddr(state, baddr) {
             state.baddr = baddr
         },
-        setWBalance(state, balance) {
-            state.WBalance = balance
+        setBuyerList(state, list) {
+            state.buyerList = list
         }
     },
     actions: {},

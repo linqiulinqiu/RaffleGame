@@ -12,7 +12,6 @@
 </template>
 <script>
 import { ethers } from "ethers";
-import game from "../../game";
 import tokens from "../../tokens";
 export default {
   props: ["bsc"],

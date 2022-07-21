@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import Plotheader from "./components/Plotheader.vue";
-import Plotfooter from "./components/Plotfooter.vue";
+import Plotheader from "./components/common/Plotheader.vue";
+import Plotfooter from "./components/common/Plotfooter.vue";
 
 export default {
   name: "app",
