@@ -76,7 +76,7 @@ import tokens from "../../tokens";
 import MsgCarousel from "./MsgCarousel.vue";
 export default {
   name: "gameMsg",
-  props: ["bsc", "stateInfo", "load_data"],
+  props: ["bsc", "stateInfo"],
   components: {
     MsgCarousel,
   },
@@ -137,7 +137,6 @@ export default {
           console.log("waitdown buy res", res, e);
           obj.buy_loading = false;
           obj.tickets_num = "";
-          obj.load_data();
           obj.load_ext_amount();
         });
       } catch (e) {

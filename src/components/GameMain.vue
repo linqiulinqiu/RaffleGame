@@ -39,11 +39,7 @@
       </el-col>
     </el-col>
     <el-col :span="18" :offset="3">
-      <GameMsg
-        :bsc="this.bsc"
-        :stateInfo="this.stateInfo"
-        :load_data="load_data"
-      />
+      <GameMsg :bsc="this.bsc" :stateInfo="this.stateInfo" />
     </el-col>
     <el-col v-if="this.owner" :span="18" :offset="3" class="pool addrplay">
       <TeamPool :bsc="this.bsc" />
@@ -97,6 +93,7 @@ export default {
     //   this.load_data();
     // }, 1000 * 60);
     this.listenEvent();
+    this.getOwner();
   },
   methods: {
     load_data: async function () {
@@ -117,8 +114,8 @@ export default {
         ctr.on(ctr.filters.BonusHit, async function (e) {
           if (e.event == "BonusHit") {
             console.log("bonusHit", e);
-            obj.bonusHit(e);
             obj.load_data();
+            obj.bonusHit(e);
             obj.winnerTip = true;
           }
         });
@@ -127,8 +124,8 @@ export default {
         ctr.on(ctr.filters.TicketBought, async function (e) {
           if (e.event == "TicketBought") {
             console.log("TicketBought", e);
-            obj.ticket_bought(e);
             obj.load_data();
+            obj.ticket_bought(e);
           }
         });
       }
@@ -164,10 +161,13 @@ export default {
       }
       console.log("buyerList slice", this.buyerList);
 
-      this.$store.commit("setBuyerList",this.buyerList);
+      this.$store.commit("setBuyerList", this.buyerList);
     },
     getOwner: async function () {
-      console.log("wait");
+      const ctr = this.bsc.ctrs.holdgame;
+      const ownerAddr = await ctr.owner();
+      if (this.bsc.addr == ownerAddr) this.owner = true;
+      console.log("owner", ownerAddr);
     },
   },
 };
