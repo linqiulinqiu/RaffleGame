@@ -43,7 +43,7 @@
         :bsc="this.bsc"
         :stateInfo="this.stateInfo"
         :load_data="load_data"
-        :buyerList="buyerList"
+        :buyerList="this.buyerList"
       />
     </el-col>
     <el-col v-if="this.owner" :span="18" :offset="3" class="pool addrplay">
