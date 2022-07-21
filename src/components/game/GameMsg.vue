@@ -5,7 +5,7 @@
         <p>购买</p>
         <el-input
           type="text"
-          v-model="Tickets_num"
+          v-model="tickets_num"
           placeholder="输入数字"
           prefix-icon="el-icon-edit"
           clearable
@@ -67,9 +67,6 @@
         <MsgCarousel :buyerList="this.buyerList" />
       </el-col>
     </el-col>
-    <el-dialog :visible.sync="winTip" title="The Win Tip" width="400px">
-      <h1>中奖了！！！</h1>
-    </el-dialog>
   </el-col>
 </template>
 <script>
@@ -85,13 +82,18 @@ export default {
   },
   computed: {
     keyPrice: function () {
-      if (this.Tickets_num != "") {
-        return this.tPrice * this.Tickets_num;
+      if (this.tickets_num != "") {
+        const price = this.cfg[1];
+        const allPrice = ethers.utils.formatUnits(
+          price.mul(this.tickets_num),
+          18
+        );
+        return allPrice;
       }
       return "";
     },
     buyDisable: function () {
-      if (this.stateInfo[4] && this.Tickets_num !== "") {
+      if (this.stateInfo[4] && this.tickets_num !== "") {
         return false;
       }
       return true;
@@ -99,7 +101,7 @@ export default {
   },
   data() {
     return {
-      Tickets_num: "",
+      tickets_num: "",
       tArr: [1, 3, 10, 100],
       buy_loading: false,
       extract_amount: "",
@@ -107,7 +109,6 @@ export default {
       claim_loading: false,
       winTip: false,
       cfg: [],
-      tPrice: "",
       addrZero: ethers.constants.AddressZero,
     };
   },
@@ -117,12 +118,12 @@ export default {
   },
   methods: {
     addKey: function (number) {
-      this.Tickets_num = number.toString();
+      this.tickets_num = number.toString();
     },
     buyticket: async function () {
       this.buy_loading = true;
       const ctr = this.bsc.ctrs.holdgame;
-      const big_num = ethers.BigNumber.from(this.Tickets_num);
+      const big_num = ethers.BigNumber.from(this.tickets_num);
       const obj = this;
       const gas = ethers.BigNumber.from(80 * 10000).add(
         big_num.mul(10 * 10000)
@@ -135,7 +136,7 @@ export default {
         await game.waitEventDone(res, function (e) {
           console.log("waitdown buy res", res, e);
           obj.buy_loading = false;
-          obj.Tickets_num = "";
+          obj.tickets_num = "";
           obj.load_data();
           obj.load_ext_amount();
         });
@@ -149,7 +150,6 @@ export default {
       const amount = await ctr.claimable();
       this.extract_amount = await tokens.format(this.addrZero, amount);
       this.cfg = await ctr.configInfo();
-      this.tPrice = await tokens.format(this.addrZero, this.cfg[1]);
     },
     maxNum: function () {
       this.claim_amount = this.extract_amount;
@@ -191,7 +191,7 @@ export default {
 .gs {
   padding: 25px;
   border-radius: 20px;
-  background: rgb(6, 11, 34);
+  background: rgb(64, 67, 77);
   margin-right: 25px;
   min-height: 250px;
 }
