@@ -2,7 +2,7 @@
   <el-col>
     <el-col id="gamemain">
       <el-col class="pool" :span="18" :offset="3">
-        <el-col v-if="this.stateInfo[4]">
+        <el-col v-if="this.stateInfo[5]">
           <h3>
             游戏进行中 <span>第{{ times + 1 }}轮游戏</span>
           </h3>
@@ -81,7 +81,7 @@ export default {
       bonus_pool: "0",
       countdown: "null",
       times: "",
-      stateInfo: "",
+      stateInfo: ["", "", "", "", "", true],
       winnerTip: false,
       bonusInfo: {},
       owner: false,
@@ -89,9 +89,6 @@ export default {
   },
   mounted: function () {
     this.load_data();
-    // setInterval(() => {
-    //   this.load_data();
-    // }, 1000 * 60);
     this.listenEvent();
     this.getOwner();
   },
