@@ -31,7 +31,6 @@
           type="primary"
           class="buy-btn"
           @click="buyticket"
-          :disabled="this.buyDisable"
           >Buy</el-button
         >
       </el-col>
@@ -60,7 +59,7 @@
             提取
           </el-button>
         </p>
-        <p>我的票证数 : {{ stateInfo[3] }}</p>
+        <p>我的票证数 : {{ stateInfo.myTickets }}</p>
       </el-col>
       <el-col class="gs gs2" :lg="{ span: 7 }" :span="18">
         <h4>消息栏</h4>
@@ -83,7 +82,7 @@ export default {
   computed: {
     keyPrice: function () {
       if (this.tickets_num != "") {
-        const price = this.cfg[1];
+        const price = this.stateInfo.ticketPrice
         const allPrice = ethers.utils.formatUnits(
           price.mul(this.tickets_num),
           18
@@ -91,13 +90,7 @@ export default {
         return allPrice;
       }
       return "";
-    },
-    buyDisable: function () {
-      if (this.stateInfo[4] && this.tickets_num !== "") {
-        return false;
-      }
-      return true;
-    },
+    }
   },
   data() {
     return {
@@ -108,13 +101,11 @@ export default {
       claim_amount: "",
       claim_loading: false,
       winTip: false,
-      cfg: [],
       addrZero: ethers.constants.AddressZero,
     };
   },
   mounted: function () {
     this.load_ext_amount();
-    console.log(this.buyDisable);
   },
   methods: {
     addKey: function (number) {
@@ -123,14 +114,14 @@ export default {
     buyticket: async function () {
       this.buy_loading = true;
       const ctr = this.bsc.ctrs.holdgame;
-      const big_num = ethers.BigNumber.from(this.tickets_num);
+      const buy_count = ethers.BigNumber.from(this.tickets_num);
       const obj = this;
       const gas = ethers.BigNumber.from(80 * 10000).add(
-        big_num.mul(10 * 10000)
+        buy_count.mul(10 * 10000)
       );
       try {
-        const res = await ctr.buy(big_num, {
-          value: this.cfg[1].mul(big_num),
+        const res = await ctr.buy(buy_count, {
+          value: this.stateInfo.ticketPrice.mul(buy_count),
           gasLimit: gas,
         });
         await game.waitEventDone(res, function (e) {
@@ -148,7 +139,6 @@ export default {
       const ctr = this.bsc.ctrs.holdgame;
       const amount = await ctr.claimable();
       this.extract_amount = await tokens.format(this.addrZero, amount);
-      this.cfg = await ctr.configInfo();
     },
     maxNum: function () {
       this.claim_amount = this.extract_amount;

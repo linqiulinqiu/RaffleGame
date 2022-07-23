@@ -2,9 +2,13 @@
   <el-col>
     <el-col id="gamemain">
       <el-col class="pool" :span="18" :offset="3">
-        <el-col v-if="this.stateInfo[5]">
+        <el-col v-if="stateInfo.uptime===false">
+          <h1>读取中，请稍等...</h1>
+        </el-col>
+        <el-col v-else-if="stateInfo.uptime>=0">
+          <h1>已运行 <span>{{ stateInfo.uptime }}秒</span></h1>
           <h3>
-            游戏进行中 <span>第{{ times + 1 }}轮游戏</span>
+            游戏进行中 <span>第{{ stateInfo.stageIndex + 1 }}轮游戏</span>
           </h3>
           <h5>谁能万里挑一？</h5>
           <h1>
@@ -15,26 +19,14 @@
             中奖概率: <span>{{ countdown * 100 }}%</span>
           </p>
         </el-col>
-        <el-col v-else>
-          <h1>游戏已结束，大奖已产生</h1>
+        <el-col v-else-if="stateInfo.uptime<-100">
+          <h1>游戏将于{{ -(stateInfo.uptime/60) }}分钟后开始</h1>
+        </el-col>
+        <el-col v-else-if="stateInfo.uptime<0">
+          <h1>游戏将于{{ -(stateInfo.uptime) }}秒后开始</h1>
         </el-col>
         <p>
-          总票证数： <span>{{ parseInt(stateInfo[1]) }}</span>
-        </p>
-        <p>
-          <el-popover
-            placement="right"
-            title="Winner List"
-            width="400"
-            trigger="click"
-          >
-            <ul>
-              <li v-for="(item, index) in stateInfo[0]" :key="index">
-                {{ item }}
-              </li>
-            </ul>
-            <el-button slot="reference" size="mini">中奖者名单</el-button>
-          </el-popover>
+          总票证数： <span>{{ stateInfo.ticketIndex }}</span>
         </p>
       </el-col>
     </el-col>
@@ -44,20 +36,6 @@
     <el-col v-if="this.owner" :span="18" :offset="3" class="pool addrplay">
       <TeamPool :bsc="this.bsc" />
     </el-col>
-    <el-dialog
-      :visible.sync="winnerTip"
-      title="The winner tips"
-      width="300"
-      class="winer-dialog"
-    >
-      <el-card>
-        <h3 class="center">本轮奖励已产生</h3>
-        <p>中奖者：{{ bonusInfo.addr }}</p>
-        <p>金额：{{ bonusInfo.amount }}</p>
-        <p>奖励轮数：{{ bonusInfo.bonusIdx }}</p>
-        <p>奖券编号：{{ bonusInfo.ticketIdx }}</p>
-      </el-card>
-    </el-dialog>
   </el-col>
 </template>
 <script>
@@ -80,9 +58,14 @@ export default {
     return {
       bonus_pool: "0",
       countdown: "null",
-      times: "",
-      stateInfo: ["", "", "", "", "", true],
-      winnerTip: false,
+      stateInfo: {
+          ticketPrice: ethers.BigNumber.from(0),
+          stageIndex: 0,
+          ticketIndex: 0,
+          h1Balance: ethers.BigNumber.from(0),
+          myTickets: 0,
+          uptime: false
+      },
       bonusInfo: {},
       owner: false,
     };
@@ -96,13 +79,21 @@ export default {
     load_data: async function () {
       const ctr = this.bsc.ctrs.holdgame;
       this.countdown = ethers.utils.formatEther(await ctr.bonusPossible());
-      this.stateInfo = await ctr.bonusState();
+      const state = await ctr.bonusState()
+      const sinfo = Object.assign({}, this.stateInfo)
+      sinfo.ticketPrice = state[0]
+      sinfo.stageIndex = state[1].toNumber()
+      sinfo.ticketIndex = state[2].toNumber()
+      sinfo.h1Balance = state[3]
+      sinfo.myTickets = state[4].toNumber()
+      sinfo.uptime = state[5].toNumber()
+      this.stateInfo = sinfo
+
       console.log("load all data", this.stateInfo);
       this.bonus_pool = await tokens.format(
         ethers.constants.AddressZero,
-        this.stateInfo[2]
+        this.stateInfo.h1Balance
       );
-      this.times = this.stateInfo[0].length;
     },
     listenEvent: async function () {
       const obj = this;
@@ -113,7 +104,6 @@ export default {
             console.log("bonusHit", e);
             obj.load_data();
             obj.bonusHit(e);
-            obj.winnerTip = true;
           }
         });
       }
