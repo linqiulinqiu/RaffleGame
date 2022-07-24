@@ -98,19 +98,19 @@ export default {
     listenEvent: async function () {
       const obj = this;
       const ctr = this.bsc.ctrs.holdgame;
-      if (ctr.filters.BonusHit) {
-        ctr.on(ctr.filters.BonusHit, async function (e) {
-          if (e.event == "BonusHit") {
-            console.log("bonusHit", e);
+      if (ctr.filters.WinBonus) {
+        ctr.on(ctr.filters.WinBonus, async function (e) {
+          if (e.event == "WinBonus") {
+            console.log("win-bonus", e);
             obj.load_data();
             obj.bonusHit(e);
           }
         });
       }
-      if (ctr.filters.TicketBought) {
-        ctr.on(ctr.filters.TicketBought, async function (e) {
-          if (e.event == "TicketBought") {
-            console.log("TicketBought", e);
+      if (ctr.filters.TicketsBought) {
+        ctr.on(ctr.filters.TicketsBought, async function (e) {
+          if (e.event == "TicketsBought") {
+            console.log("tickets-bought", e);
             obj.load_data();
             obj.ticket_bought(e);
           }
