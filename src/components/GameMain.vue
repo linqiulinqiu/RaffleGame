@@ -2,11 +2,13 @@
   <el-col>
     <el-col id="gamemain">
       <el-col class="pool" :span="18" :offset="3">
-        <el-col v-if="stateInfo.uptime===false">
+        <el-col v-if="stateInfo.uptime === false">
           <h1>读取中，请稍等...</h1>
         </el-col>
-        <el-col v-else-if="stateInfo.uptime>=0">
-          <h1>已运行 <span>{{ stateInfo.uptime }}秒</span></h1>
+        <el-col v-else-if="stateInfo.uptime >= 0">
+          <h1>
+            已运行 <span>{{ stateInfo.uptime }}秒</span>
+          </h1>
           <h3>
             游戏进行中 <span>第{{ stateInfo.stageIndex + 1 }}轮游戏</span>
           </h3>
@@ -19,11 +21,11 @@
             中奖概率: <span>{{ countdown * 100 }}%</span>
           </p>
         </el-col>
-        <el-col v-else-if="stateInfo.uptime<-100">
-          <h1>游戏将于{{ -(stateInfo.uptime/60) }}分钟后开始</h1>
+        <el-col v-else-if="stateInfo.uptime < -100">
+          <h1>游戏将于{{ -(stateInfo.uptime / 60) }}分钟后开始</h1>
         </el-col>
-        <el-col v-else-if="stateInfo.uptime<0">
-          <h1>游戏将于{{ -(stateInfo.uptime) }}秒后开始</h1>
+        <el-col v-else-if="stateInfo.uptime < 0">
+          <h1>游戏将于{{ -stateInfo.uptime }}秒后开始</h1>
         </el-col>
         <p>
           总票证数： <span>{{ stateInfo.ticketIndex }}</span>
@@ -59,15 +61,16 @@ export default {
       bonus_pool: "0",
       countdown: "null",
       stateInfo: {
-          ticketPrice: ethers.BigNumber.from(0),
-          stageIndex: 0,
-          ticketIndex: 0,
-          h1Balance: ethers.BigNumber.from(0),
-          myTickets: 0,
-          uptime: false
+        ticketPrice: ethers.BigNumber.from(0),
+        stageIndex: 0,
+        ticketIndex: 0,
+        h1Balance: ethers.BigNumber.from(0),
+        myTickets: 0,
+        uptime: false,
       },
       bonusInfo: {},
       owner: false,
+      buylist: {},
     };
   },
   mounted: function () {
@@ -79,15 +82,15 @@ export default {
     load_data: async function () {
       const ctr = this.bsc.ctrs.holdgame;
       this.countdown = ethers.utils.formatEther(await ctr.bonusPossible());
-      const state = await ctr.bonusState()
-      const sinfo = Object.assign({}, this.stateInfo)
-      sinfo.ticketPrice = state[0]
-      sinfo.stageIndex = state[1].toNumber()
-      sinfo.ticketIndex = state[2].toNumber()
-      sinfo.h1Balance = state[3]
-      sinfo.myTickets = state[4].toNumber()
-      sinfo.uptime = state[5].toNumber()
-      this.stateInfo = sinfo
+      const state = await ctr.bonusState();
+      const sinfo = Object.assign({}, this.stateInfo);
+      sinfo.ticketPrice = state[0];
+      sinfo.stageIndex = state[1].toNumber();
+      sinfo.ticketIndex = state[2].toNumber();
+      sinfo.h1Balance = state[3];
+      sinfo.myTickets = state[4].toNumber();
+      sinfo.uptime = Number(state[5]);
+      this.stateInfo = sinfo;
 
       console.log("load all data", this.stateInfo);
       this.bonus_pool = await tokens.format(
@@ -130,25 +133,29 @@ export default {
       };
     },
     ticket_bought: function (e) {
+      let list = this.buylist;
       const buyer = e.args.buyer;
-      const index = parseInt(e.args.idx);
+      const index = parseInt(e.args[1]);
+      const amount = parseInt(e.args[2]);
       const key = buyer;
       const info = {
         buyer: buyer,
         index: index,
+        count: amount,
       };
-      this.buyerList[key] = info;
-      console.log("buyerList all", this.buyerList);
-      const buy_num = Object.keys(this.buyerList).length;
+      console.log("info", info, info.count, key);
+      list[key] = info;
+      const buy_num = Object.keys(list).length;
+      console.log("buyerList", list, buy_num);
+
       if (buy_num > 5) {
         const start = buy_num - 5;
-        this.buyerList = Object.fromEntries(
-          Object.entries(this.buyerList).slice(start, buy_num)
-        );
+        list = Object.fromEntries(Object.entries(list).slice(start, buy_num));
       }
-      console.log("buyerList slice", this.buyerList);
+      console.log("buyerList slice", list);
 
-      this.$store.commit("setBuyerList", this.buyerList);
+      this.$store.commit("setBuyerList", list);
+      console.log(this.$store.state.buyerList);
     },
     getOwner: async function () {
       const ctr = this.bsc.ctrs.holdgame;

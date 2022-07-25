@@ -125,7 +125,6 @@ export default {
           gasLimit: gas,
         });
         await game.waitEventDone(res, function (e) {
-          console.log("waitdown buy res", res, e);
           obj.buy_loading = false;
           obj.tickets_num = "";
           obj.load_ext_amount();

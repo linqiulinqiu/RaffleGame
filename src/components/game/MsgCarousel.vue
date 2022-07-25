@@ -8,7 +8,13 @@
           }}
         </span>
         <br />
-        <span>持有的最后一张票证号：{{ info.index }}</span>
+        <span> 本次购买数目：{{ info.count }}</span>
+        <br />
+        <span>
+          本次购买票证号：
+          <span v-if="(info.count = 1)">{{ info.index + info.count }}</span>
+          <span v-else>{{ info.index }} ~ {{ info.index + info.count }}</span>
+        </span>
       </el-carousel-item>
     </el-carousel>
   </el-col>
@@ -16,7 +22,6 @@
 <script>
 import { mapState } from "vuex";
 export default {
-  // props: ["buyerList"],
   computed: mapState({
     buyerList: "buyerList",
   }),
