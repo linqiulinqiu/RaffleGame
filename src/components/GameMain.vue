@@ -45,7 +45,12 @@
       class="winner-dialog"
     >
       <el-card>
-        <h3 class="center">本轮奖励已产生</h3>
+        <h2 class="center">
+          <span v-if="this.bsc.addr == bonusInfo.buyer">
+            恭喜您，中奖了！！！
+          </span>
+          <span v-else>新的奖励产生了！！！</span>
+        </h2>
         <p>中奖者：{{ bonusInfo.buyer }}</p>
         <p>金额：{{ bonusInfo.amount }}</p>
         <p>奖励轮数：{{ bonusInfo.stageIdx }}</p>
@@ -149,29 +154,29 @@ export default {
       };
     },
     ticket_bought: function (e) {
-      let list = this.buylist;
       const buyer = e.args.buyer;
-      const index = parseInt(e.args.count);
-      const amount = parseInt(e.args.from);
-      console.log("1111", buyer, index, amount);
-      const key = buyer;
+      const index = parseInt(e.args.from);
+      const amount = parseInt(e.args.count);
+      console.log("INFO", buyer, index, amount);
       const info = {
-        buyer: buyer,
-        index: index,
+        buyer: e.args.buyer,
+        idx: index,
         count: amount,
       };
-      console.log("info", info, info.count, key);
-      list[key] = info;
-      const buy_num = Object.keys(list).length;
-      console.log("buyerList", list, buy_num);
+      console.log("info", JSON.stringify(info));
+      this.buylist[buyer] = info;
+      console.log("testtttttt", JSON.stringify(this.buylist));
 
+      const buy_num = Object.keys(this.buylist).length;
       if (buy_num > 5) {
         const start = buy_num - 5;
-        list = Object.fromEntries(Object.entries(list).slice(start, buy_num));
+        this.buylist = Object.fromEntries(
+          Object.entries(this.buylist).slice(start, buy_num)
+        );
       }
-      console.log("buyerList slice", list);
+      console.log("buyerList slice", this.buylist);
 
-      this.$store.commit("setBuyerList", list);
+      this.$store.commit("setBuyerList", this.buylist);
       console.log(this.$store.state.buyerList);
     },
     getOwner: async function () {
