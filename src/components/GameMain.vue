@@ -38,6 +38,20 @@
     <el-col v-if="this.owner" :span="18" :offset="3" class="pool addrplay">
       <TeamPool :bsc="this.bsc" />
     </el-col>
+    <el-dialog
+      :visible.sync="winnerTip"
+      title="The winner tips"
+      width="300"
+      class="winer-dialog"
+    >
+      <el-card>
+        <h3 class="center">本轮奖励已产生</h3>
+        <p>中奖者：{{ bonusInfo.buyer }}</p>
+        <p>金额：{{ bonusInfo.amount }}</p>
+        <p>奖励轮数：{{ bonusInfo.stageIdx }}</p>
+        <p>奖券编号：{{ bonusInfo.ticketIdx }}</p>
+      </el-card>
+    </el-dialog>
   </el-col>
 </template>
 <script>
@@ -69,6 +83,7 @@ export default {
         uptime: false,
       },
       bonusInfo: {},
+      winnerTip: false,
       owner: false,
       buylist: {},
     };
@@ -92,7 +107,7 @@ export default {
       sinfo.uptime = Number(state[5]);
       this.stateInfo = sinfo;
 
-      console.log("load all data", this.stateInfo);
+      // console.log("load all data", this.stateInfo);
       this.bonus_pool = await tokens.format(
         ethers.constants.AddressZero,
         this.stateInfo.h1Balance
@@ -126,9 +141,9 @@ export default {
         e.args.amount
       );
       this.bonusInfo = {
-        addr: e.args[0],
+        buyer: e.args[0],
         amount: amount,
-        bonusIdx: e.args.bonusIdx,
+        stageIdx: e.args.stageIdx,
         ticketIdx: e.args.ticketIdx,
       };
     },
@@ -161,7 +176,6 @@ export default {
       const ctr = this.bsc.ctrs.holdgame;
       const ownerAddr = await ctr.owner();
       if (this.bsc.addr == ownerAddr) this.owner = true;
-      console.log("owner", ownerAddr);
     },
   },
 };
