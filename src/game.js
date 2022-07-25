@@ -14,8 +14,8 @@ async function recent_bonus_list(bsc){
     const currentBlock = await bsc.provider.getBlockNumber()
     const hg = bsc.ctrs.holdgame
     const evts = await hg.queryFilter(hg.filters.WinBonus, currentBlock-blockLimit)
-    console.log('events')
     const wins = []
+    console.log('events')
     for(let i in evts){
         const arg = evts[i].args
         if(evts[i].event =='TicketsBought'){
@@ -31,6 +31,7 @@ async function recent_bonus_list(bsc){
             })
         }
     }
+    return wins
 }
 
 async function connect(commit,provider) {
