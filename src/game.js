@@ -9,11 +9,36 @@ const ptAddrs = {
     'BNB': ethers.constants.AddressZero,
 }
 
+async function recent_bonus_list(bsc){
+    const blockLimit = 500  // for some RPC endpoints, it is limited to 500 for main-net and 5000 for test-net; 
+    const currentBlock = await bsc.provider.getBlockNumber()
+    const hg = bsc.ctrs.holdgame
+    const evts = await hg.queryFilter(hg.filters.WinBonus, currentBlock-blockLimit)
+    console.log('events')
+    const wins = []
+    for(let i in evts){
+        const arg = evts[i].args
+        if(evts[i].event =='TicketsBought'){
+            console.log('\ttickets-bought: buyer', arg.buyer, 'count', arg.count.toNumber(), 'from-index', arg.from.toNumber())
+        }else if(evts[i].event =='WinBonus'){
+            console.log('\twin-bonus: winner', arg.winner, 'amount', ethers.utils.formatEther(arg.amount), 'stage', arg.stageIdx.toNumber(),
+                'ticket-index', arg.ticketIdx.toNumber())
+            wins.push({
+                winner: arg.winner,
+                amount: arg.amount,
+                stage: arg.stageIdx.toNumber(),
+                tidx: arg.ticketIdx.toNumber()
+            })
+        }
+    }
+}
 
 async function connect(commit,provider) {
     try {
         bsc = await pbwallet.connect(provider, true)
         console.log("bsc in js",bsc)
+        const bonuslist = await recent_bonus_list(bsc)
+        console.log('wins', bonuslist)
     } catch (e) {
         return e.message
     }
