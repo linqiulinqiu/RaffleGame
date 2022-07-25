@@ -117,6 +117,7 @@ export default {
         ethers.constants.AddressZero,
         this.stateInfo.h1Balance
       );
+      this.bonus_pool = Number(this.bonus_pool).toFixed(5);
     },
     listenEvent: async function () {
       const obj = this;

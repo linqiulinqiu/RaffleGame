@@ -82,7 +82,7 @@ export default {
   computed: {
     keyPrice: function () {
       if (this.tickets_num != "") {
-        const price = this.stateInfo.ticketPrice
+        const price = this.stateInfo.ticketPrice;
         const allPrice = ethers.utils.formatUnits(
           price.mul(this.tickets_num),
           18
@@ -90,7 +90,7 @@ export default {
         return allPrice;
       }
       return "";
-    }
+    },
   },
   data() {
     return {
@@ -138,6 +138,7 @@ export default {
       const ctr = this.bsc.ctrs.holdgame;
       const amount = await ctr.claimable();
       this.extract_amount = await tokens.format(this.addrZero, amount);
+      this.extract_amount = Number(this.extract_amount).toFixed(5);
     },
     maxNum: function () {
       this.claim_amount = this.extract_amount;
@@ -156,7 +157,7 @@ export default {
           await game.waitEventDone(res, function (e) {
             obj.claim_loading = false;
             obj.claim_amount = "";
-            obj.load_ext_amount()
+            obj.load_ext_amount();
           });
         } catch (e) {
           console.log("claim err", e);
