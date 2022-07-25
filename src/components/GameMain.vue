@@ -42,7 +42,7 @@
       :visible.sync="winnerTip"
       title="The winner tips"
       width="300"
-      class="winer-dialog"
+      class="winner-dialog"
     >
       <el-card>
         <h3 class="center">本轮奖励已产生</h3>
@@ -122,6 +122,7 @@ export default {
             console.log("win-bonus", e);
             obj.load_data();
             obj.bonusHit(e);
+            obj.winnerTip = true;
           }
         });
       }
@@ -150,8 +151,9 @@ export default {
     ticket_bought: function (e) {
       let list = this.buylist;
       const buyer = e.args.buyer;
-      const index = parseInt(e.args[1]);
-      const amount = parseInt(e.args[2]);
+      const index = parseInt(e.args.count);
+      const amount = parseInt(e.args.from);
+      console.log("1111", buyer, index, amount);
       const key = buyer;
       const info = {
         buyer: buyer,
@@ -181,6 +183,9 @@ export default {
 };
 </script>
 <style>
+.winner-dialog {
+  background: url("../assets/image/firework.gif");
+}
 .winner-dialog .el-card {
   padding: 30px;
 }
