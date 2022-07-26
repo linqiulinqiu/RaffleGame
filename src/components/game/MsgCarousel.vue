@@ -1,6 +1,6 @@
 <template>
   <el-col>
-    <el-carousel height="100px" direction="vertical" :interval="2000">
+    <el-carousel height="150px" :interval="2000" :loop="false" arrow="never" indicator-position="none">
       <el-carousel-item v-for="info in buyerList" :key="info.buyer">
         <span>
           购买者地址：{{

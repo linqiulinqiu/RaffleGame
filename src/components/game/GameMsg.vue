@@ -138,7 +138,7 @@ export default {
       const ctr = this.bsc.ctrs.holdgame;
       const amount = await ctr.claimable();
       this.extract_amount = await tokens.format(this.addrZero, amount);
-      this.extract_amount = Number(this.extract_amount).toFixed(5);
+      // this.extract_amount = Number(this.extract_amount).toFixed(5);
     },
     maxNum: function () {
       this.claim_amount = this.extract_amount;

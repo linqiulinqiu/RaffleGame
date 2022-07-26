@@ -166,6 +166,7 @@ export default {
       };
       console.log("info", JSON.stringify(info));
       this.buylist[buyer] = info;
+      this.buylist[buyer]["count"] = amount;
       console.log("testtttttt", JSON.stringify(this.buylist));
 
       const buy_num = Object.keys(this.buylist).length;
