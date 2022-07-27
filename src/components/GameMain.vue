@@ -136,7 +136,7 @@ export default {
             console.log("win-bonus", e);
             obj.load_data();
             obj.bonusHit(e);
-            const minirw = ethers.utils.parseUnits(0.05, 18);
+            const minirw = ethers.utils.parseUnits("0.05", 18);
             if (e.args.amount.eq(minirw)) {
               if (obj.bsc.addr == e.args[0]) {
                 obj.miniWin = true;
