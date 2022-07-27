@@ -2,12 +2,12 @@
   <el-col>
     <el-col id="gamemain">
       <el-col class="pool" :span="18" :offset="3">
-        <el-col v-if="stateInfo.uptime === false">
+        <el-col v-if="stateInfo.uptime.display === false">
           <h1>读取中，请稍等...</h1>
         </el-col>
-        <el-col v-else-if="stateInfo.uptime >= 0">
+        <el-col v-else-if="stateInfo.uptime.run >= 0">
           <h1>
-            已运行 <span>{{ stateInfo.uptime }}秒</span>
+            已运行 <span>{{ stateInfo.uptime.display }}</span>
           </h1>
           <h3>
             游戏进行中 <span>第{{ stateInfo.stageIndex + 1 }}轮游戏</span>
@@ -21,11 +21,11 @@
             中奖概率: <span>{{ countdown * 100 }}%</span>
           </p>
         </el-col>
-        <el-col v-else-if="stateInfo.uptime < -100">
-          <h1>游戏将于{{ -(stateInfo.uptime / 60) }}分钟后开始</h1>
+        <el-col v-else-if="stateInfo.uptime.run < -100">
+          <h1>游戏将于{{ stateInfo.uptime.display }}后开始</h1>
         </el-col>
-        <el-col v-else-if="stateInfo.uptime < 0">
-          <h1>游戏将于{{ -stateInfo.uptime }}秒后开始</h1>
+        <el-col v-else-if="stateInfo.uptime.run < 0">
+          <h1>游戏将于{{ -stateInfo.uptime.display }}后开始</h1>
         </el-col>
         <p>
           总票证数： <span>{{ stateInfo.ticketIndex }}</span>
@@ -69,6 +69,7 @@ import TeamPool from "./game/TeamPool.vue";
 import { ethers } from "ethers";
 import tokens from "../tokens";
 import { mapState } from "vuex";
+import times from "../times";
 export default {
   name: "gameMsg",
   components: {
@@ -89,7 +90,10 @@ export default {
         ticketIndex: 0,
         h1Balance: ethers.BigNumber.from(0),
         myTickets: 0,
-        uptime: false,
+        uptime: {
+          display: false,
+          run: "",
+        },
       },
       bonusInfo: {},
       winnerTip: false,
@@ -119,7 +123,9 @@ export default {
         ethers.constants.AddressZero,
         amount
       );
-      sinfo.uptime = Number(state[5]);
+      sinfo.uptime.display = times.formatD(Number(state[5]), false);
+      sinfo.uptime.run = Number(state[5]);
+      console.log("sinfo", sinfo.uptime);
       this.stateInfo = sinfo;
       this.bonus_pool = await tokens.format(
         ethers.constants.AddressZero,
