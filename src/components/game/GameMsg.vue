@@ -34,34 +34,42 @@
           >Buy</el-button
         >
       </el-col>
-      <el-col class="gs gs2" :lg="{ span: 7 }" :span="18">
-        <p>
-          奖金: <span class="left">{{ extract_amount }}</span> BNB
-        </p>
-        <p>
-          <el-input
-            v-model="claim_amount"
-            placeholder="输入数字"
-            prefix-icon="el-icon-edit"
-            clearable
-            class="key-ipt"
-          >
-            <template slot="append">
-              <el-button class="left" @click="maxNum">Max</el-button>
-            </template>
-          </el-input>
-          <el-button
-            :loading="claim_loading"
-            class="ext_btn"
-            @click="claim"
-            type="primary"
-          >
-            提取
-          </el-button>
-        </p>
-        <p>我的票证数 : {{ stateInfo.myTickets }}</p>
+      <el-col
+        class="gs gs2"
+        :lg="{ span: 7 }"
+        :span="18"
+        :class="{ wintips: this.win_tips }"
+      >
+        <el-col>
+          <p>
+            奖金: <span class="left">{{ extract_amount }}</span> BNB
+          </p>
+          <p>
+            <el-input
+              v-model="claim_amount"
+              placeholder="输入数字"
+              prefix-icon="el-icon-edit"
+              clearable
+              class="key-ipt"
+            >
+              <template slot="append">
+                <el-button class="left" @click="maxNum">Max</el-button>
+              </template>
+            </el-input>
+            <el-button
+              :loading="claim_loading"
+              class="ext_btn"
+              @click="claim"
+              type="primary"
+            >
+              提取
+            </el-button>
+          </p>
+          <p>我的票证数 : {{ stateInfo.myTickets }}</p>
+        </el-col>
+        <!-- <el-col v-show="this.win_tips" class="win-tips"> </el-col> -->
       </el-col>
-      <el-col class="gs gs2" :lg="{ span: 7 }" :span="18">
+      <el-col class="gs" :lg="{ span: 7 }" :span="18">
         <h4>消息栏</h4>
         <MsgCarousel />
       </el-col>
@@ -75,7 +83,7 @@ import tokens from "../../tokens";
 import MsgCarousel from "./MsgCarousel.vue";
 export default {
   name: "gameMsg",
-  props: ["bsc", "stateInfo"],
+  props: ["bsc", "stateInfo", "win_tips"],
   components: {
     MsgCarousel,
   },
@@ -100,7 +108,6 @@ export default {
       extract_amount: "",
       claim_amount: "",
       claim_loading: false,
-      winTip: false,
       addrZero: ethers.constants.AddressZero,
     };
   },
@@ -169,6 +176,18 @@ export default {
 };
 </script>
 <style>
+.wintips::before {
+  content: "已中奖0.05 BNB";
+  text-align: center;
+  color: #38f2af;
+  background: url("../../assets/image/win.gif") no-repeat;
+  width: 200px;
+  height: 160px;
+  display: inline-block;
+  position: absolute;
+  top: -140px;
+  right: 20px;
+}
 .tab {
   background: rgba(55, 57, 67, 1);
   margin-top: 20px;
@@ -184,6 +203,9 @@ export default {
   background: rgb(64, 67, 77);
   margin-right: 25px;
   min-height: 250px;
+}
+.gs2 {
+  position: relative;
 }
 .left {
   margin-left: 10px;

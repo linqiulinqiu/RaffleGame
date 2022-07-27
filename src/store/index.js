@@ -19,7 +19,10 @@ export default new Vuex.Store({
             state.baddr = baddr
         },
         setBuyerList(state, list) {
-            state.buyerList = Object.assign({},list)
+            state.buyerList = list
+        },
+        setbListInit(state, key) {
+          state.buyerList[key] = {}  
         }
     },
     actions: {},

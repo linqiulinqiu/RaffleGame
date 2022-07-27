@@ -1,7 +1,13 @@
 <template>
   <el-col>
-    <el-carousel height="150px" :interval="2000" :loop="false" arrow="never" indicator-position="none">
-      <el-carousel-item v-for="info in buyerList" :key="info.buyer">
+    <el-carousel
+      height="150px"
+      :interval="2000"
+      :loop="false"
+      arrow="never"
+      indicator-position="none"
+    >
+      <el-carousel-item v-for="info in buyerList" :key="info.idx">
         <span>
           购买者地址：{{
             info.buyer.substr(0, 6) + "..." + info.buyer.substr(-4, 4)

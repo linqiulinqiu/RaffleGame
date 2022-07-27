@@ -33,7 +33,11 @@
       </el-col>
     </el-col>
     <el-col :span="18" :offset="3">
-      <GameMsg :bsc="this.bsc" :stateInfo="this.stateInfo" />
+      <GameMsg
+        :bsc="this.bsc"
+        :stateInfo="this.stateInfo"
+        :win_tips="this.miniWin"
+      />
     </el-col>
     <el-col v-if="this.owner" :span="18" :offset="3" class="pool addrplay">
       <TeamPool :bsc="this.bsc" />
@@ -91,6 +95,7 @@ export default {
       winnerTip: false,
       owner: false,
       buylist: {},
+      miniWin: false,
     };
   },
   mounted: function () {
@@ -111,8 +116,6 @@ export default {
       sinfo.myTickets = state[4].toNumber();
       sinfo.uptime = Number(state[5]);
       this.stateInfo = sinfo;
-
-      // console.log("load all data", this.stateInfo);
       this.bonus_pool = await tokens.format(
         ethers.constants.AddressZero,
         this.stateInfo.h1Balance
@@ -128,7 +131,16 @@ export default {
             console.log("win-bonus", e);
             obj.load_data();
             obj.bonusHit(e);
-            obj.winnerTip = true;
+            if (e.args.amount.eq(ethers.BigNumber.from(0.05))) {
+              if (obj.bsc.addr == e.args[0]) {
+                obj.miniWin = true;
+                setTimeout(function () {
+                  obj.miniWin = false;
+                }, 3000);
+              }
+            } else {
+              obj.winnerTip = true;
+            }
           }
         });
       }
@@ -157,29 +169,35 @@ export default {
     ticket_bought: function (e) {
       const buyer = e.args.buyer;
       const index = parseInt(e.args.from);
-      const amount = parseInt(e.args.count);
-      console.log("INFO", buyer, index, amount);
+      const count = parseInt(e.args.count);
+      const blk = e.blockNumber;
+      console.log("INFO", buyer, index, count);
       const info = {
         buyer: e.args.buyer,
         idx: index,
-        count: amount,
+        count: count,
       };
-      console.log("info", JSON.stringify(info));
-      this.buylist[buyer] = info;
-      this.buylist[buyer]["count"] = amount;
-      console.log("testtttttt", JSON.stringify(this.buylist));
+      console.log("info", JSON.stringify(info), info);
+      debugger;
+      this.buylist[blk] = info;
+      console.log(
+        "testtttttt",
+        JSON.stringify(this.buylist),
+        info,
+        this.buylist
+      );
 
-      const buy_num = Object.keys(this.buylist).length;
-      if (buy_num > 5) {
-        const start = buy_num - 5;
+      const blk_count = Object.keys(this.buylist).length;
+      if (blk_count > 5) {
+        const start = blk_count - 5;
         this.buylist = Object.fromEntries(
-          Object.entries(this.buylist).slice(start, buy_num)
+          Object.entries(this.buylist).slice(start, blk_count)
         );
       }
-      console.log("buyerList slice", this.buylist);
-
+      console.log("buyerList slice", this.buylist, info);
+      this.$store.commit("setbListInit", blk);
       this.$store.commit("setBuyerList", this.buylist);
-      console.log(this.$store.state.buyerList);
+      console.log(this.$store.state.buyerList, this.buylist);
     },
     getOwner: async function () {
       const ctr = this.bsc.ctrs.holdgame;
