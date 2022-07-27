@@ -42,7 +42,7 @@
       >
         <el-col>
           <p>
-            奖金: <span class="left">{{ extract_amount }}</span> BNB
+            奖金: <span class="left">{{ stateInfo.myClaimale }}</span> BNB
           </p>
           <p>
             <el-input
@@ -111,9 +111,7 @@ export default {
       addrZero: ethers.constants.AddressZero,
     };
   },
-  mounted: function () {
-    this.load_ext_amount();
-  },
+  mounted: function () {},
   methods: {
     addKey: function (number) {
       this.tickets_num = number.toString();
@@ -134,27 +132,21 @@ export default {
         await game.waitEventDone(res, function (e) {
           obj.buy_loading = false;
           obj.tickets_num = "";
-          obj.load_ext_amount();
+          // obj.load_ext_amount();
         });
       } catch (e) {
         this.buy_loading = false;
         console.log("buy ticket", e);
       }
     },
-    load_ext_amount: async function () {
-      const ctr = this.bsc.ctrs.holdgame;
-      const amount = await ctr.claimable();
-      this.extract_amount = await tokens.format(this.addrZero, amount);
-      // this.extract_amount = Number(this.extract_amount).toFixed(5);
-    },
     maxNum: function () {
-      this.claim_amount = this.extract_amount;
+      this.claim_amount = this.stateInfo.myClaimale;
     },
     claim: async function () {
       this.claim_loading = true;
       const ctr = this.bsc.ctrs.holdgame;
       const amount = await tokens.parse(this.addrZero, this.claim_amount);
-      if (this.claim_amount > this.extract_amount) {
+      if (this.claim_amount > this.stateInfo.myClaimale) {
         this.claim_loading = false;
         return this.$message("请输入正确的金额");
       } else {
@@ -164,7 +156,7 @@ export default {
           await game.waitEventDone(res, function (e) {
             obj.claim_loading = false;
             obj.claim_amount = "";
-            obj.load_ext_amount();
+            // obj.load_ext_amount();
           });
         } catch (e) {
           console.log("claim err", e);

@@ -18,8 +18,8 @@
         <br />
         <span>
           本次购买票证号：
-          <span v-if="(info.count = 1)">{{ info.idx + info.count }}</span>
-          <span v-else>{{ info.idx }} ~ {{ info.idx + info.count }}</span>
+          <span v-if="info.count == 1">#{{ info.idx + info.count }}</span>
+          <span v-else>#{{ info.idx }} ~ #{{ info.idx + info.count }}</span>
         </span>
       </el-carousel-item>
     </el-carousel>

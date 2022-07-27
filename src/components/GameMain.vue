@@ -114,6 +114,11 @@ export default {
       sinfo.ticketIndex = state[2].toNumber();
       sinfo.h1Balance = state[3];
       sinfo.myTickets = state[4].toNumber();
+      const amount = await ctr.claimable();
+      sinfo.myClaimale = await tokens.format(
+        ethers.constants.AddressZero,
+        amount
+      );
       sinfo.uptime = Number(state[5]);
       this.stateInfo = sinfo;
       this.bonus_pool = await tokens.format(
@@ -131,7 +136,8 @@ export default {
             console.log("win-bonus", e);
             obj.load_data();
             obj.bonusHit(e);
-            if (e.args.amount.eq(ethers.BigNumber.from(0.05))) {
+            const minirw = ethers.utils.parseUnits(0.05, 18);
+            if (e.args.amount.eq(minirw)) {
               if (obj.bsc.addr == e.args[0]) {
                 obj.miniWin = true;
                 setTimeout(function () {
@@ -167,26 +173,13 @@ export default {
       };
     },
     ticket_bought: function (e) {
-      const buyer = e.args.buyer;
-      const index = parseInt(e.args.from);
-      const count = parseInt(e.args.count);
       const blk = e.blockNumber;
-      console.log("INFO", buyer, index, count);
       const info = {
         buyer: e.args.buyer,
-        idx: index,
-        count: count,
+        idx: parseInt(e.args.from),
+        count: parseInt(e.args.count),
       };
-      console.log("info", JSON.stringify(info), info);
-      debugger;
       this.buylist[blk] = info;
-      console.log(
-        "testtttttt",
-        JSON.stringify(this.buylist),
-        info,
-        this.buylist
-      );
-
       const blk_count = Object.keys(this.buylist).length;
       if (blk_count > 5) {
         const start = blk_count - 5;
@@ -194,10 +187,7 @@ export default {
           Object.entries(this.buylist).slice(start, blk_count)
         );
       }
-      console.log("buyerList slice", this.buylist, info);
-      this.$store.commit("setbListInit", blk);
       this.$store.commit("setBuyerList", this.buylist);
-      console.log(this.$store.state.buyerList, this.buylist);
     },
     getOwner: async function () {
       const ctr = this.bsc.ctrs.holdgame;
