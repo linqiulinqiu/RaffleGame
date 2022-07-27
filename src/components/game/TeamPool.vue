@@ -1,10 +1,10 @@
 <template>
   <el-col>
-    <h4>团队资金</h4>
+    <h4>{{ $t("team-pool") }}</h4>
     <p>
       <span v-for="(key, value) in this.team_pool_list" :key="value">
         {{ key.amount }} {{ value }}
-        <el-button @click="teamClaim(key['addr'])">提取</el-button>
+        <el-button @click="teamClaim(key['addr'])">{{ $t("claim") }}</el-button>
         <br />
       </span>
     </p>

@@ -1,5 +1,8 @@
 {
     "buy":"Buy",
+    "buyer":"Buyer address",
+    "buy-num":"Buy count",
+    "buy-tk":"Buy tickets ID",
     
     "cancel":"Cancel",
     "connect":"Connect Wallet",
@@ -32,17 +35,36 @@
 
     "home-note":"Any questions? We'd love to hear from you",
 
+    "ipt-num":"Input the number",
+
     "look-info":"Please connect wallet",
    
     "max":"Max",
     "my-ticket":"My ticket amount",
+    "msg-bar":"News column",
     
+    "one-million":"Who can be the one in a million?",
+
     "price":"Price",
     "pool":"Pool",
 
-    "running":"Game in progress",
-    "round":"Round {time} game",
-    "winner-list":"Winner list",
+    "running":"{times} of operation",
+    "run-pre":"Game will start in {time}",
+    "round":"In the game，Round {time}",
+    "reading":"Reading,please waite",
 
-    "total-tik":"Total Tickets"
+    "winner-list":"Winner list",
+    "win-pro":"Probability of winning",
+    "win-msg":[
+        "A new reward has been created!!!",
+        "Congratulations, you've won!!!",
+        "Winner",
+        "Amount of money",
+        "Number of bonus rounds",
+        "Raffle number"
+    ],
+
+
+    "total-tik":"Total Tickets",
+    "team-pool":"Team pool"
 }

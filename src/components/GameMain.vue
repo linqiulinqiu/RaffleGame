@@ -3,32 +3,36 @@
     <el-col id="gamemain">
       <el-col class="pool" :span="18" :offset="3">
         <el-col v-if="stateInfo.uptime.display === false">
-          <h1>读取中，请稍等...</h1>
+          <h1>{{ $t("reading") }}</h1>
         </el-col>
         <el-col v-else-if="stateInfo.uptime.run >= 0">
           <h1>
-            已运行 <span>{{ stateInfo.uptime.display }}</span>
+            {{ $t("running", { times: stateInfo.uptime.display }) }}
           </h1>
           <h3>
-            游戏进行中 <span>第{{ stateInfo.stageIndex + 1 }}轮游戏</span>
+            {{ $t("round", { time: stateInfo.stageIndex + 1 }) }}
+            <!-- 游戏进行中 <span>第{{ stateInfo.stageIndex + 1 }}轮游戏</span> -->
           </h3>
-          <h5>谁能万里挑一？</h5>
+          <h5>{{ $t("one-million") }}</h5>
           <h1>
-            <span>奖池：</span>
+            <span>{{ $t("pool") }}：</span>
             <span class="font_color">{{ bonus_pool }}</span> BNB
           </h1>
           <p>
-            中奖概率: <span>{{ countdown * 100 }}%</span>
+            {{ $t("win-pro") }}: <span>{{ countdown * 100 }}%</span>
           </p>
         </el-col>
         <el-col v-else-if="stateInfo.uptime.run < -100">
-          <h1>游戏将于{{ stateInfo.uptime.display }}后开始</h1>
+          <h1>
+            {{ $t("run-pre", { time: stateInfo.uptime.display }) }}
+            <!-- 游戏将于{{ stateInfo.uptime.display }}后开始 -->
+          </h1>
         </el-col>
         <el-col v-else-if="stateInfo.uptime.run < 0">
           <h1>游戏将于{{ -stateInfo.uptime.display }}后开始</h1>
         </el-col>
         <p>
-          总票证数： <span>{{ stateInfo.ticketIndex }}</span>
+          {{ $t("total-tik") }}： <span>{{ stateInfo.ticketIndex }}</span>
         </p>
       </el-col>
     </el-col>
@@ -42,23 +46,18 @@
     <el-col v-if="this.owner" :span="18" :offset="3" class="pool addrplay">
       <TeamPool :bsc="this.bsc" />
     </el-col>
-    <el-dialog
-      :visible.sync="winnerTip"
-      title="The winner tips"
-      width="300"
-      class="winner-dialog"
-    >
+    <el-dialog :visible.sync="winnerTip" width="300" class="winner-dialog">
       <el-card>
         <h2 class="center">
           <span v-if="this.bsc.addr == bonusInfo.buyer">
-            恭喜您，中奖了！！！
+            {{ win_msg[1] }}
           </span>
-          <span v-else>新的奖励产生了！！！</span>
+          <span v-else>{{ win_msg[0] }}</span>
         </h2>
-        <p>中奖者：{{ bonusInfo.buyer }}</p>
-        <p>金额：{{ bonusInfo.amount }}</p>
-        <p>奖励轮数：{{ bonusInfo.stageIdx }}</p>
-        <p>奖券编号：{{ bonusInfo.ticketIdx }}</p>
+        <p>{{ win_msg[2] }}：{{ bonusInfo.buyer }}</p>
+        <p>{{ win_msg[3] }}：{{ bonusInfo.amount }}</p>
+        <p>{{ win_msg[4] }}：{{ bonusInfo.stageIdx }}</p>
+        <p>{{ win_msg[5] }}：{{ bonusInfo.ticketIdx }}</p>
       </el-card>
     </el-dialog>
   </el-col>
@@ -78,6 +77,9 @@ export default {
   },
   computed: mapState({
     buyerList: "buyerList",
+    win_msg: function () {
+      return this.$t("win-msg");
+    },
   }),
   props: ["bsc"],
   data() {

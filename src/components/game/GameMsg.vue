@@ -2,11 +2,11 @@
   <el-col>
     <el-col class="tab">
       <el-col class="gs" :lg="{ span: 7, offset: 1 }" :span="18" :offset="1">
-        <p>购买</p>
+        <p>{{ $t("buy") }}</p>
         <el-input
           type="text"
           v-model="tickets_num"
-          placeholder="输入数字"
+          :placeholder="$t('ipt-num')"
           prefix-icon="el-icon-edit"
           clearable
           class="key-ipt"
@@ -31,7 +31,7 @@
           type="primary"
           class="buy-btn"
           @click="buyticket"
-          >Buy</el-button
+          >{{ $t("buy") }}</el-button
         >
       </el-col>
       <el-col
@@ -42,12 +42,13 @@
       >
         <el-col>
           <p>
-            奖金: <span class="left">{{ stateInfo.myClaimale }}</span> BNB
+            {{ $t("earn") }}:
+            <span class="left">{{ stateInfo.myClaimale }}</span> BNB
           </p>
           <p>
             <el-input
               v-model="claim_amount"
-              placeholder="输入数字"
+              :placeholder="$t('ipt-num')"
               prefix-icon="el-icon-edit"
               clearable
               class="key-ipt"
@@ -62,15 +63,14 @@
               @click="claim"
               type="primary"
             >
-              提取
+              {{ $t("claim") }}
             </el-button>
           </p>
-          <p>我的票证数 : {{ stateInfo.myTickets }}</p>
+          <p>{{ $t("my-ticket") }} : {{ stateInfo.myTickets }}</p>
         </el-col>
-        <!-- <el-col v-show="this.win_tips" class="win-tips"> </el-col> -->
       </el-col>
       <el-col class="gs" :lg="{ span: 7 }" :span="18">
-        <h4>消息栏</h4>
+        <h4>{{ $t("msg-bar") }}</h4>
         <MsgCarousel />
       </el-col>
     </el-col>
