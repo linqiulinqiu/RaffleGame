@@ -169,7 +169,10 @@ export default {
 </script>
 <style>
 .wintips::before {
-  content: "已中奖0.05 BNB";
+  content: "Win 0.05 BNB";
+  border-radius: 20px;
+  padding-top: 20px;
+  font-size: 30px;
   text-align: center;
   color: #38f2af;
   background: url("../../assets/image/win.gif") no-repeat;
