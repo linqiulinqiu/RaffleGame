@@ -3,8 +3,7 @@
     <el-carousel
       height="150px"
       :interval="2000"
-      :loop="false"
-      arrow="never"
+      arrow="hover"
       indicator-position="none"
     >
       <el-carousel-item v-for="info in buyerList" :key="info.idx">

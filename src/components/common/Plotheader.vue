@@ -89,6 +89,7 @@ export default {
     marketList: "marketList",
     nav() {
       return [
+        { tag: this.$t("home"), link: "/Home" },
         { tag: this.$t("game"), link: "/Game" },
         { tag: this.$t("doc"), link: "/Doc" },
       ];
