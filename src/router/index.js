@@ -3,12 +3,14 @@ import VueRouter from 'vue-router'
 import Game from "@/views/Game"
 import Doc from "@/views/Doc"
 import Home  from "@/views/Home"
+import WhitePaper from "@/components/doc/WhitePaper"
+import Instruction from "@/components/doc/Instruction"
 
 Vue.use(VueRouter)
 
 const routes = [{
     path: "/",
-    redirect: "/Game",
+    redirect: "/Home",
     component: Game,
   },
   {
@@ -24,7 +26,19 @@ const routes = [{
   {
     path: "/Doc",
     name: "Doc",
-    component:Doc
+    component: Doc,
+    redirect:"/Doc/WhitePaper",
+    children: [
+      {
+        path: "/Doc/WhitePaper",
+        name:'WhitePaper',
+        component:WhitePaper
+      }, {
+        path:"/Doc/Instruction",
+        name: "Instruction",
+        component:Instruction
+      }
+    ]
   },
 ]
 

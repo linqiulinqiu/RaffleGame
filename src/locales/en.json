@@ -36,6 +36,7 @@
     "home-note":"Any questions? We'd love to hear from you",
 
     "ipt-num":"Input the number",
+    "instruction":"Instruction",
 
     "look-info":"Please connect wallet",
    
@@ -63,6 +64,7 @@
         "Number of bonus rounds",
         "Raffle number"
     ],
+    "white-paper":"WhitePaper",
 
 
     "total-tik":"Total Tickets",
