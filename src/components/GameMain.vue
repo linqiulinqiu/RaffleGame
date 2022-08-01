@@ -127,8 +127,9 @@ export default {
       );
       sinfo.uptime.display = times.formatD(Number(state[5]), false);
       sinfo.uptime.run = Number(state[5]);
-      console.log("sinfo", sinfo.uptime);
+      // console.log("sinfo", sinfo.uptime);
       this.stateInfo = sinfo;
+      console.log("stateInfo", this.stateInfo);
       this.bonus_pool = await tokens.format(
         ethers.constants.AddressZero,
         this.stateInfo.h1Balance
@@ -144,6 +145,7 @@ export default {
             console.log("win-bonus", e);
             obj.load_data();
             obj.bonusHit(e);
+            console.log("win the bonus", this.stateInfo);
             const minirw = ethers.utils.parseUnits("0.05", 18);
             if (e.args.amount.eq(minirw)) {
               if (obj.bsc.addr == e.args[0]) {
