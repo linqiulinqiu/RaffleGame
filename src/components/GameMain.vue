@@ -41,6 +41,7 @@
         :bsc="this.bsc"
         :stateInfo="this.stateInfo"
         :win_tips="this.miniWin"
+        :loadcliam="this.load_claimble"
       />
     </el-col>
     <el-col v-if="this.owner" :span="18" :offset="3" class="pool addrplay">
@@ -92,6 +93,7 @@ export default {
         ticketIndex: 0,
         h1Balance: ethers.BigNumber.from(0),
         myTickets: 0,
+        myClaimable: 0,
         uptime: {
           display: false,
           run: "",
@@ -110,7 +112,15 @@ export default {
     this.getOwner();
   },
   methods: {
+    load_claimble: async function () {
+      const amount = await this.bsc.ctrs.holdgame.claimable();
+      this.stateInfo.myClaimable = await tokens.format(
+        ethers.constants.AddressZero,
+        amount
+      );
+    },
     load_data: async function () {
+      await this.load_claimble();
       const ctr = this.bsc.ctrs.holdgame;
       this.countdown = ethers.utils.formatEther(await ctr.bonusPossible());
       const state = await ctr.bonusState();
@@ -120,16 +130,15 @@ export default {
       sinfo.ticketIndex = state[2].toNumber();
       sinfo.h1Balance = state[3];
       sinfo.myTickets = state[4].toNumber();
-      const amount = await ctr.claimable();
-      sinfo.myClaimale = await tokens.format(
-        ethers.constants.AddressZero,
-        amount
-      );
+      // const amount = await ctr.claimable();
+      // sinfo.myClaimale = await tokens.format(
+      //   ethers.constants.AddressZero,
+      //   amount
+      // );
       sinfo.uptime.display = times.formatD(Number(state[5]), false);
       sinfo.uptime.run = Number(state[5]);
-      // console.log("sinfo", sinfo.uptime);
       this.stateInfo = sinfo;
-      console.log("stateInfo", this.stateInfo);
+      // console.log("stateInfo", this.stateInfo);
       this.bonus_pool = await tokens.format(
         ethers.constants.AddressZero,
         this.stateInfo.h1Balance

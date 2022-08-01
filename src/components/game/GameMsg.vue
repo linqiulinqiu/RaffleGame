@@ -43,7 +43,7 @@
         <el-col>
           <p>
             {{ $t("earn") }}:
-            <span class="left">{{ stateInfo.myClaimale }}</span> BNB
+            <span class="left">{{ stateInfo.myClaimable }}</span> BNB
           </p>
           <p>
             <el-input
@@ -83,7 +83,7 @@ import tokens from "../../tokens";
 import MsgCarousel from "./MsgCarousel.vue";
 export default {
   name: "gameMsg",
-  props: ["bsc", "stateInfo", "win_tips"],
+  props: ["bsc", "stateInfo", "win_tips", "loadcliam"],
   components: {
     MsgCarousel,
   },
@@ -140,13 +140,13 @@ export default {
       }
     },
     maxNum: function () {
-      this.claim_amount = this.stateInfo.myClaimale;
+      this.claim_amount = this.stateInfo.myClaimable;
     },
     claim: async function () {
       this.claim_loading = true;
       const ctr = this.bsc.ctrs.holdgame;
       const amount = await tokens.parse(this.addrZero, this.claim_amount);
-      if (this.claim_amount > this.stateInfo.myClaimale) {
+      if (this.claim_amount > this.stateInfo.myClaimable) {
         this.claim_loading = false;
         return this.$message("请输入正确的金额");
       } else {
@@ -156,7 +156,7 @@ export default {
           await game.waitEventDone(res, function (e) {
             obj.claim_loading = false;
             obj.claim_amount = "";
-            // obj.load_ext_amount();
+            obj.loadcliam();
           });
         } catch (e) {
           console.log("claim err", e);
